@@ -45,7 +45,7 @@
 #include "rk3399-excavator-sapphire.dtsi"
 #include "rk3399-linux.dtsi"
 #include <dt-bindings/input/input.h>
-#include "screen-timing/panel-toshiba-duallvds-1920x1080.dtsi"
+//#include "screen-timing/panel-toshiba-duallvds-1920x1080.dtsi"
 
 / {
 	model = "Rockchip RK3399 Excavator Board (Linux Opensource)";
@@ -72,43 +72,26 @@
 		regulator-max-microvolt = <1800000>;
 	};
 
-	  leds {
+
+	leds {  
                 status = "okay";
                 compatible = "gpio-leds";
-
-                HUB_EN {
-                        gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
-                        default-state = "on";
-                };
-                TP_EN {
-                        gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;
-                        default-state = "on";
-                };
-                VCC_5V {
-                        gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
-                        default-state = "on";
-                };
-                VCC5V_CAMERA {
-                        gpios = <&gpio1 18 GPIO_ACTIVE_HIGH>;
-                        default-state = "on";
-                };
-                4G_PWR {
+                SYS_STATUS {
                         gpios = <&gpio4 27 GPIO_ACTIVE_HIGH>;
+                        label = "led-blink";
+                        linux,default-trigger = "timer";
+                        retain-state-suspended;
+                };
+                hub_pwr {
+                        gpios = <&gpio4 24 GPIO_ACTIVE_HIGH>;
                         default-state = "on";
                 };
-                4G_RST {
-                        gpios = <&gpio4 26 GPIO_ACTIVE_HIGH>;
-                        default-state = "on";
-                };
-                HOST4_EN {
-                        gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
-                        default-state = "on";
-                };
-                USB_PWR_EN {
-                        gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
+                hub_rst {
+                        gpios = <&gpio4 21 GPIO_ACTIVE_HIGH>;
                         default-state = "on";
                 };
         };
+
 
 	adc_keys: adc-keys {
 		compatible = "adc-keys";
@@ -214,7 +197,6 @@
         status = "okay";
         pmu1830-supply = <&vcc_1v8>;
 };
-
 
 &i2c1 {
 	status = "okay";
