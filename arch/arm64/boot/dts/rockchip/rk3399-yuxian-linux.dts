@@ -92,6 +92,26 @@
                 };
         };
 
+	es8316-sound {
+                compatible = "simple-audio-card";
+                simple-audio-card,format = "i2s";
+                simple-audio-card,name = "rockchip,es8316-codec";
+                simple-audio-card,mclk-fs = <256>;
+                simple-audio-card,widgets =
+                        "Microphone", "Mic Jack",
+                        "Headphone", "Headphone Jack";
+                simple-audio-card,routing =
+                        "Mic Jack", "MICBIAS1",
+                        "IN1P", "Mic Jack",
+                        "Headphone Jack", "HPOL",
+                        "Headphone Jack", "HPOR";
+                simple-audio-card,cpu {
+                        sound-dai = <&i2s0>;
+                };
+                simple-audio-card,codec {
+                        sound-dai = <&es8316>;
+                };
+        };
 
 	adc_keys: adc-keys {
 		compatible = "adc-keys";
@@ -201,80 +221,18 @@
 &i2c1 {
 	status = "okay";
 
-	gsl3673: gsl3673@40 {
-		compatible = "GSL,GSL3673";
-		reg = <0x40>;
-		screen_max_x = <1536>;
-		screen_max_y = <2048>;
-		irq_gpio_number = <&gpio1 20 IRQ_TYPE_LEVEL_LOW>;
-		rst_gpio_number = <&gpio4 22 GPIO_ACTIVE_HIGH>;
-	};
-
-	tc358749x: tc358749x@f {
-		compatible = "toshiba,tc358749";
-		reg = <0xf>;
-		clocks = <&ext_cam_clk>;
-		clock-names = "refclk";
-		reset-gpios = <&gpio2 7 GPIO_ACTIVE_LOW>;
-		/* hardware irq-pin is dangling
-		 * connect it to other gpio then configurate follow interrupt
-		 * or del config just using software poll
-		 */
-		//interrupt-parent = <&gpio2>;
-		//interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&hdmiin_gpios>;
-		status = "disabled";
-		rockchip,camera-module-index = <0>;
-		rockchip,camera-module-facing = "back";
-		rockchip,camera-module-name = "default";
-		rockchip,camera-module-lens-name = "default";
-		port {
-			hdmiin_out0: endpoint {
-				/* Unlinked mipi dphy rx0 */
-				//remote-endpoint = <&mipi_in_ucam0>;
-				data-lanes = <1 2 3 4>;
-				clock-noncontinuous;
-				link-frequencies =
-					/bits/ 64 <297000000>;
-			};
-		};
-	};
-
-	vm149c: vm149c@0c {
-		compatible = "silicon touch,vm149c";
-		status = "okay";
-		reg = <0x0c>;
-		rockchip,camera-module-index = <0>;
-		rockchip,camera-module-facing = "back";
-	};
-
-	ov13850: ov13850@10 {
-		compatible = "ovti,ov13850";
-		status = "okay";
-		reg = <0x10>;
-		clocks = <&cru SCLK_CIF_OUT>;
-		clock-names = "xvclk";
-
-		/* conflict with csi-ctl-gpios */
-		reset-gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;
-		pwdn-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-		pinctrl-names = "rockchip,camera_default";
-		pinctrl-0 = <&cif_clkout>;
-		rockchip,camera-module-index = <0>;
-		rockchip,camera-module-facing = "back";
-		rockchip,camera-module-name = "CMK-CT0116";
-		rockchip,camera-module-lens-name = "Largan-50013A1";
-
-		lens-focus = <&vm149c>;
-
-		port {
-			ucam_out0: endpoint {
-				remote-endpoint = <&mipi_in_ucam0>;
-				data-lanes = <1 2>;
-			};
-		};
-	};
+	es8316: es8316@10 {
+                status = "okay";
+                #sound-dai-cells = <0>;
+                compatible = "everest,es8316";
+                reg = <0x10>;
+                clocks = <&cru SCLK_I2S_8CH_OUT>;
+                clock-names = "mclk";
+                pinctrl-names = "default";
+                pinctrl-0 = <&i2s_8ch_mclk>;
+                spk-con-gpio = <&gpio0 11 GPIO_ACTIVE_HIGH>;
+                //hp-det-gpio = <&gpio4 28 GPIO_ACTIVE_HIGH>;
+        };
 };
 
 &i2c4 {
@@ -297,105 +255,12 @@
 	status = "okay";
 };
 
-&mipi_dphy_rx0 {
-	status = "okay";
-
-	ports {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		port@0 {
-			reg = <0>;
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			mipi_in_ucam0: endpoint@1 {
-				reg = <1>;
-				remote-endpoint = <&ucam_out0>;
-				data-lanes = <1 2>;
-			};
-		};
-
-		port@1 {
-			reg = <1>;
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			dphy_rx0_out: endpoint@0 {
-				reg = <0>;
-				remote-endpoint = <&isp0_mipi_in>;
-			};
-		};
-	};
-};
-
-&mipi_dphy_tx1rx1 {
-	status = "okay";
-
-	ports {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		port@0 {
-			reg = <0>;
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			mipi_in_ucam1: endpoint@1 {
-				reg = <1>;
-				/* Unlinked camera */
-				//remote-endpoint = <&ucam_out1>;
-				data-lanes = <1 2>;
-			};
-		};
-
-		port@1 {
-			reg = <1>;
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			dphy_tx1rx1_out: endpoint@0 {
-				reg = <0>;
-				remote-endpoint = <&isp1_mipi_in>;
-			};
-		};
-	};
-};
-
 &pcie_phy {
 	status = "okay";
 };
 
 &pcie0 {
 	status = "okay";
-};
-
-&rkisp1_0 {
-	status = "okay";
-
-	port {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		isp0_mipi_in: endpoint@0 {
-			reg = <0>;
-			remote-endpoint = <&dphy_rx0_out>;
-		};
-	};
-};
-
-&rkisp1_1 {
-	status = "okay";
-
-	port {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		isp1_mipi_in: endpoint@0 {
-			reg = <0>;
-			remote-endpoint = <&dphy_tx1rx1_out>;
-		};
-	};
 };
 
 &saradc {
