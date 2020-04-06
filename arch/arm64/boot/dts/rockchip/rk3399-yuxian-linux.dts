@@ -93,6 +93,10 @@
                         gpios = <&gpio4 21 GPIO_ACTIVE_HIGH>;
                         default-state = "on";
                 };
+		usb_pwr {
+			gpios = <&gpio1 20 GPIO_ACTIVE_HIGH>;
+                        default-state = "on";
+		};
         };
 
 	es8316-sound {
