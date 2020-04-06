@@ -649,8 +649,10 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
 			int major = max(s->w, s->h) >> 1;
 			int minor = min(s->w, s->h) >> 1;
 
-			input_event(input, EV_ABS, ABS_MT_POSITION_X, s->x);
-			input_event(input, EV_ABS, ABS_MT_POSITION_Y, s->y);
+			//input_event(input, EV_ABS, ABS_MT_POSITION_X, s->x);
+			//input_event(input, EV_ABS, ABS_MT_POSITION_Y, s->y);
+			input_event(input, EV_ABS, ABS_MT_POSITION_X,16384 - s->x);
+                        input_event(input, EV_ABS, ABS_MT_POSITION_Y,9600 - s->y);
 			input_event(input, EV_ABS, ABS_MT_TOOL_X, s->cx);
 			input_event(input, EV_ABS, ABS_MT_TOOL_Y, s->cy);
 			input_event(input, EV_ABS, ABS_MT_DISTANCE,
