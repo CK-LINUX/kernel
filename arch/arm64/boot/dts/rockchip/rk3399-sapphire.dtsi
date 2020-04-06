@@ -640,7 +640,7 @@
 
 &usbdrd_dwc3_1 {
 	status = "okay";
-	//dr_mode = "host";
+	dr_mode = "host";
 };
 
 &usb_host0_ehci {

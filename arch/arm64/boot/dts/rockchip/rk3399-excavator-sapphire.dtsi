@@ -69,28 +69,6 @@
 		};
 	};
 
-	rt5651_sound: rt5651-sound {
-		status = "okay";
-		compatible = "simple-audio-card";
-		simple-audio-card,format = "i2s";
-		simple-audio-card,name = "realtek,rt5651-codec";
-		simple-audio-card,mclk-fs = <256>;
-		simple-audio-card,widgets =
-			"Microphone", "Mic Jack",
-			"Headphone", "Headphone Jack";
-		simple-audio-card,routing =
-			"Mic Jack", "MICBIAS1",
-			"IN1P", "Mic Jack",
-			"Headphone Jack", "HPOL",
-			"Headphone Jack", "HPOR";
-		simple-audio-card,cpu {
-			sound-dai = <&i2s0>;
-		};
-		simple-audio-card,codec {
-			sound-dai = <&rt5651>;
-		};
-	};
-
 	dw_hdmi_audio: dw-hdmi-audio {
 		status = "disabled";
 		compatible = "rockchip,dw-hdmi-audio";
@@ -217,44 +195,6 @@
 	i2c-scl-rising-time-ns = <450>;
 	i2c-scl-falling-time-ns = <15>;
 	#sound-dai-cells = <0>;
-};
-
-&i2c1 {
-	status = "okay";
-	i2c-scl-rising-time-ns = <300>;
-	i2c-scl-falling-time-ns = <15>;
-
-	rt5651: rt5651@1a {
-		#sound-dai-cells = <0>;
-		compatible = "rockchip,rt5651";
-		reg = <0x1a>;
-		clocks = <&cru SCLK_I2S_8CH_OUT>;
-		clock-names = "mclk";
-		pinctrl-names = "default";
-		pinctrl-0 = <&i2s_8ch_mclk>;
-		spk-con-gpio = <&gpio0 11 GPIO_ACTIVE_HIGH>;
-		hp-det-gpio = <&gpio4 28 GPIO_ACTIVE_LOW>;
-	};
-};
-
-&i2c4 {
-	status = "okay";
-	i2c-scl-rising-time-ns = <600>;
-	i2c-scl-falling-time-ns = <20>;
-
-	mpu6500@68 {
-		status = "okay";
-		compatible = "invensense,mpu6500";
-		reg = <0x68>;
-		irq-gpio = <&gpio1 22 IRQ_TYPE_EDGE_RISING>;
-		mpu-int_config = <0x10>;
-		mpu-level_shifter = <0>;
-		mpu-orientation = <0 1 0 1 0 0 0 0 1>;
-		orientation-x= <1>;
-		orientation-y= <0>;
-		orientation-z= <0>;
-		mpu-debug = <1>;
-	};
 };
 
 &pcie0 {

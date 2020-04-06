@@ -76,6 +76,9 @@
 	leds {  
                 status = "okay";
                 compatible = "gpio-leds";
+
+		pinctrl-names = "default";
+                pinctrl-0 = <&bl_en>;
                 SYS_STATUS {
                         gpios = <&gpio4 27 GPIO_ACTIVE_HIGH>;
                         label = "led-blink";
@@ -169,17 +172,6 @@
 		clock-frequency = <27000000>;
 		clock-output-names = "CLK_CAMERA_27MHZ";
 		#clock-cells = <0>;
-	};
-
-	/delete-node/ rt5651-sound;
-	rt5651_sound: rt5651-sound {
-		compatible = "rockchip,multicodecs-card";
-		rockchip,card-name = "realtek,rt5651-codec";
-		rockchip,codec-hp-det;
-		rockchip,mclk-fs = <256>;
-		rockchip,cpu = <&i2s0>;
-		rockchip,codec = <&rt5651>;
-		status = "okay";
 	};
 
 	test_power: test-power {
